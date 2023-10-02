@@ -4,7 +4,7 @@
 
 ## Title: LibMapThemer
 ## Description: Theme Your Maps!
-## Author: |C5D3FD3@XiokroDarc|r
+## Author: |C7851A9@XiokroDarc|r
 ## DependsOn: LibGPS>=68 LibZone LibMapPing
 ## Version: 23.10.01
 ## APIVersion: 101038
