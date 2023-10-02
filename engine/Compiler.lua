@@ -171,6 +171,7 @@ function CompileTheme(theme)
 
    theme.GetRenameList  = function (self) return self.renames end
    theme.GetRename      = function (self, name, removeLineBreaks) 
+      if (not self:IsUsingRenames()) then return name end
       local renames = self:GetRenameList()
       if (not renames) then return name end
       local rename = renames[name] or name
@@ -183,6 +184,11 @@ function CompileTheme(theme)
    theme.GetFontColor  = function (self) return self.fontColor or addon:GetOptions().fontColor end
    theme.GetFullFont = function (self)
       return ("EsoUI/Common/Fonts/"..self:GetFontName() ..".otf |"..self:GetFontSize().."|thin-outline") 
+   end
+
+   theme.DisableRenames = function (self, value) self.disableRenames = value end
+   theme.IsUsingRenames = function (self)
+      return (not self.disableRenames) and (self.renames ~= nil)
    end
 
    theme.IsShowingZoneNames = function (self) return self.showZoneNames end
