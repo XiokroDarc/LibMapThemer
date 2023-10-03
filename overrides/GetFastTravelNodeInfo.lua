@@ -1,9 +1,9 @@
 local addon = LibMapThemer
 
+--TODO cleanup code
+
 local poi_group_house_owned = "/esoui/art/icons/poi/poi_group_house_owned.dds"
 local poi_group_house_unowned = "/esoui/art/icons/poi/poi_group_house_unowned.dds"
-
---TODO 
 
 local POI_TYPE_SOLO_ARENA = 12345689
 local POI_TYPE_GROUP_ARENA = 987654321
@@ -44,10 +44,9 @@ local poiTypeSwitch = {
    end,
 }
 
-
 addon.zos_GetFastTravelNodeInfo = GetFastTravelNodeInfo    
 GetFastTravelNodeInfo = function(nodeIndex)
-   --local known, name, normalizedX, normalizedY, icon, glowIcon, poiType, isLocatedInCurrentMap, linkedCollectibleIsLocked = 
+   --known, name, normalizedX, normalizedY, icon, glowIcon, poiType, isLocatedInCurrentMap, linkedCollectibleIsLocked
    local args = { addon.zos_GetFastTravelNodeInfo(nodeIndex) }
 
    local poiOptions = addon:GetOptions().pois

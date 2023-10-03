@@ -66,8 +66,6 @@ function addon:LoadTheme(theme)
    return compiledTheme
 end
 
-function addon:LoadThemePack(theme) addon:LoadTheme(theme) end
-
 function addon:GetAllThemes() return allThemes end
 
 function addon:GetTheme(themeName) return allThemes[themeName] end
@@ -102,7 +100,6 @@ function addon:GetThemesWithDependency(dependencyName)
          table.insert(themes, themeName)
       end
    end
-   --table.insert(themes, themeName)
    return themes
 end
 

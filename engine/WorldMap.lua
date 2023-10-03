@@ -49,7 +49,6 @@ function addon:GetFixedGlobalCoordinates(mapId, vanillaGlobalNX, vanillaGlobalNY
    return x, y
 end
 
-
 function addon:GetParentZoneId(zoneId)
    local parentZoneID = GetParentZoneId(zoneId)
    if (self:IsGeoParentEnabled() and LZ:GetGeographicalParentMapId(zoneId)) then parentZoneID = LZ:GetGeographicalParentMapId(zoneId) end
@@ -119,7 +118,6 @@ ZO_PreHook("ZO_WorldMap_MouseUp", function(self, mouseButton, upInside)
       end
    end
 end)
-
 
 EVENT_MANAGER:RegisterForUpdate("OnMapUpdate", 0, function (self)
    if (ZO_WorldMap:IsHidden()) then return end
