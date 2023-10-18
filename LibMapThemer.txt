@@ -15,6 +15,7 @@ LibMapThemer.xml
 LibMapThemer.lua
 
 ;Debugtools can be disabled for release version
+;debugtools/BlobEditor.lua
 debugtools/Navigator.lua
 debugtools/PolygonRecorder.lua
 debugtools/PrintCommands.lua
