@@ -14,25 +14,17 @@
 LibMapThemer.xml
 LibMapThemer.lua
 
-debugtools/DebugTools.lua
-
 ;Debugtools can be disabled for release version
 debugtools/Navigator.lua
 debugtools/PolygonRecorder.lua
 debugtools/PrintCommands.lua
 
-engine/BlobFactory.lua
-engine/Compiler.lua
-engine/WorldMap.lua
+engine/WorldMapUtils.lua
+engine/BlobCompiler.lua
+engine/ThemeCompiler.lua
 
-overrides/GetMapTitle.lua
-overrides/GetMapTileTexture.lua
-overrides/GetMapMouseoverInfo.lua
-overrides/GetUniversallyNormalizedMapInfo.lua
-overrides/GetFastTravelNodeInfo.lua
-overrides/GetMapPlayerPosition.lua
-overrides/GetMapPlayerWaypoint.lua
-
-datalibs/ZoneData.lua
-datalibs/PoiData.lua
-datalibs/RenameData.lua
+libthemes/OverrideData.lua
+libthemes/ZoneData.lua
+libthemes/PoiData.lua
+libthemes/RenameData.lua
+libthemes/DataMerge.lua

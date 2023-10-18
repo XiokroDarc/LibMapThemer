@@ -31,3 +31,40 @@ SLASH_COMMANDS["/print_zonelist"] = function (mapId)
    for zoneId, zone in pairs(zones) do zonesList = zonesList..(zoneId.." : "..zone:GetZoneName()).."\n" end
    addon:Print(zonesList)
 end
+
+
+local function PrintFunctions(table)
+   if (type(table) ~= 'table') then return end 
+   local entryText = '[Function List]\n'
+   for entry, value in pairs(table) do
+      if (type(value) == 'function') then
+         entryText = entryText.."   "..entry.."()\n"
+      end
+   end
+   addon:Print(entryText)
+end
+ 
+SLASH_COMMANDS["/print_theme_functions"] = function ()
+   local theme = addon:GetCurrentTheme()
+   if (theme) then PrintFunctions(theme) end
+end
+
+SLASH_COMMANDS["/print_map_functions"] = function ()
+   local theme = addon:GetCurrentTheme()
+   if (not theme) then return end
+   local maps = theme:GetAllMaps()
+   for _, map in pairs(maps) do PrintFunctions(map) break end
+end 
+
+SLASH_COMMANDS["/print_zone_functions"] = function ()
+   local theme = addon:GetCurrentTheme()
+   if (not theme) then return end
+   local maps = theme:GetAllMaps()
+   for _, map in pairs(maps) do 
+      local zones = map:GetAllZones()
+      for _, zone in pairs(zones) do 
+         PrintFunctions(zone) 
+         break 
+      end
+   end
+end

@@ -17,7 +17,7 @@ local function HideRecordWindow()
    ResetRecordWindow()
 end
 
-local xNEquals, yNEquals, newLine = "      { xN = ", ", yN = ", ", },\n"
+local xNEquals, yNEquals, newLine = "   { xN = ", ", yN = ", ", },\n"
 local function AddPointToPolycode(xN, yN)
    local polygonCode = LibMapThemer_Polycode:GetText()
    local mouseXN = string.format("%.04f", xN)
