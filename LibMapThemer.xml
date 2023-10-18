@@ -1,21 +1,17 @@
 <GuiXml>
    <Controls>
 
+
       <TextureComposite name="LibMapThemer_MapBlobTemplate" virtual="true" layer="BACKGROUND" level="1" pixelRoundingEnabled="false" alpha="1">      
          <Surface />
          <Controls>
-            <Label name="$(parent)Label" layer="BACKGROUND" level="2" tier="HIGH" horizontalAlignment="TEXT_ALIGN_CENTER" font="$(ANTIQUE_FONT)|18|soft-shadow-thick" >
+            <Label name="$(parent)Label" layer="BACKGROUND" level="2" tier="HIGH" >
                <Anchor point="CENTER" relativePoint="CENTER" />
             </Label>
-            <Polygon name="$(parent)Polygon" alpha="0" layer="1" tier="HIGH" >
-               <AnchorFill />
-            </Polygon>
-            <Polygon name="$(parent)DebugPoly" alpha="1"  layer="3" tier="HIGH" >
-               <AnchorFill />
-            </Polygon>
+            <Polygon name="$(parent)Polygon" alpha="0" layer="1" tier="HIGH" > <AnchorFill /> </Polygon>
+            <Polygon name="$(parent)DebugPoly" alpha="1"  layer="3" tier="HIGH" > <AnchorFill /> </Polygon>
          </Controls>
       </TextureComposite>
-
 
 
       <TopLevelControl name="LibMapThemer_RecordPolygonWindow" mouseEnabled="true" movable="true" clampedToScreen="true" resizeHandleSize="8" hidden="true">
@@ -36,6 +32,7 @@
             </Backdrop>
          </Controls>
       </TopLevelControl>
+
 
    </Controls>
 </GuiXml>

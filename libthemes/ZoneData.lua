@@ -1,9 +1,11 @@
-LibMapThemer_ZoneData = {
-   name = "LibMapThemer_ZoneData",
+local themeName = "LibMapThemer_ZoneData"
+
+_G[themeName] = {
+   name = themeName,
    prefix = "LibMapThemer",
    maps = { },
 }
-local theme = LibMapThemer_ZoneData
+local theme = _G[themeName]
 local maps = theme.maps
 
 ----------------------------------------------------------------------------------------------------------------------------------------

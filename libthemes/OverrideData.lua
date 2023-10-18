@@ -1,11 +1,12 @@
 local addon = LibMapThemer
+local themeName = "LibMapThemer_OverrideData"
 
-LibMapThemer_OverrideData = {
-   name = "LibMapThemer_OverrideData",
+_G[themeName] = {
+   name = themeName,
    prefix = "LibMapThemer",
    overrides = { }
 }
-local theme = LibMapThemer_OverrideData
+local theme = _G[themeName]
 local overrides = theme.overrides
 
 -------------------------------------------------------------------------------

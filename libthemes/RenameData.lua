@@ -1,10 +1,12 @@
 local addon = LibMapThemer
-LibMapThemer_RenameData = {
-   name = "LibMapThemer_RenameData",
+local themeName = "LibMapThemer_RenameData"
+
+_G[themeName] = {
+   name = themeName,
    prefix = "LibMapThemer",
    renames = { },
 }
-local theme = LibMapThemer_RenameData
+local theme = _G[themeName]
 local renames = theme.renames
 
 function CreateRename(name, rename, faction, storyIndex) addon:CreateRename(renames, name, rename, faction, storyIndex) end

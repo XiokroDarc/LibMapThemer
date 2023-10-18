@@ -49,7 +49,7 @@ local defaults = {
 --- Local Functions ------ Local Functions ------ Local Functions ---
 ---------------------------------------------------------------------
 local function DoesThemeHaveDependency(theme, dependencyName)
-   local dependencies = theme:GetDependencies()
+   local dependencies = theme.dependencies
    for _, dependency in pairs(dependencies) do
       if (dependency.name == dependencyName) then
          return true
@@ -122,7 +122,7 @@ function addon:SetCurrentTheme(theme) self:SetCurrentThemeByName(theme:GetName()
 function addon:GetThemesWithDependency(dependencyName)
    local themes = { }
    for themeName, theme in pairs(allThemes) do
-      if (themeName == dependencyName or DoesThemeHaveDependency(theme, dependencyName)) then
+      if ((themeName == dependencyName or theme.name == dependencyName) or DoesThemeHaveDependency(theme, dependencyName)) then
          table.insert(themes, themeName)
       end
    end
