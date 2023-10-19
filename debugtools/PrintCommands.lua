@@ -33,6 +33,7 @@ SLASH_COMMANDS["/print_zonelist"] = function (mapId)
 end
 
 
+
 local function PrintFunctions(table)
    if (type(table) ~= 'table') then return end 
    local entryText = '[Function List]\n'

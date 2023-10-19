@@ -12,10 +12,10 @@ local function CompilePolygon(zone, polygon)
       -- needed to prevent nil calls
    end
 
-   if (not polygon or not zone or not zone.data) then return end
+   if (not polygon or not zone or not zone.hitbox) then return end
 
    -- fill polygon with data
-   for _, point in pairs(zone.data) do polygon:AddPoint(point.xN, point.yN) end
+   for _, point in pairs(zone.hitbox) do polygon:AddPoint(point.xN, point.yN) end
 
    -- set handlers
    polygon:SetHandler("OnMouseEnter", function (self)
@@ -37,7 +37,7 @@ local function CompilePolygon(zone, polygon)
    polygon:SetHandler("OnMouseDown", function (self, button, ctrl, alt, shift)
       if (addon:IsInGamepadMode() or addon:IsRecordingPolygon()) then return end
       oldMouseX, oldMouseY = nil, nil
-      if (button == MOUSE_BUTTON_INDEX_LEFT) then oldMouseX, oldMouseY = addon:GetWorldMapMouseCoordinates() end
+      if (button == MOUSE_BUTTON_INDEX_LEFT) then oldMouseX, oldMouseY = addon:NormalizePreferredMousePositionToMap() end
       ZO_WorldMap_MouseDown(button, ctrl, alt, shift)
    end)
 
@@ -47,7 +47,7 @@ local function CompilePolygon(zone, polygon)
       if(upInside and button == MOUSE_BUTTON_INDEX_LEFT) then 
          if (oldMouseX ~= nil and oldMouseY ~= nil) then
             local dragAmount = 0
-            local mouseX, mouseY = addon:GetWorldMapMouseCoordinates()
+            local mouseX, mouseY = addon:NormalizePreferredMousePositionToMap()
             local isWithinX = (mouseX <= oldMouseX+dragAmount and mouseX >= oldMouseX-dragAmount)
             local isWithinY = (mouseY <= oldMouseY+dragAmount and mouseY >= oldMouseY-dragAmount)
             if (isWithinX and isWithinY) then
@@ -70,24 +70,40 @@ end
 -----------------------
 --- Label Compiling ---
 -----------------------
-local function CompileLabel(zone, label)
-   if (not zone) then return end
-   
+local function CompileZoneLabel(zone, label)
+   if (not zone or not label) then return end
    label.Update = function (self)
-      self:SetHidden(not (zone:IsEnabled() and zone:IsNameVisible()))
-      self:SetText(zone:GetZoneRename(true, addon:GetOptions().storyIndexes))
+      self:SetText(zone:GetZoneRename(true))
       self:SetFont(zone:GetFontInfo())
       self:SetColor(zone:GetFontColorUnpacked())
+      self:SetHidden(not (zone:IsEnabled() and zone:IsNameVisible()))
    end
-
-   if (not label) then return end
 
    --TODO add color and orientation to update
    label:SetColor(1,1,1,1)
    label:SetHorizontalAlignment(TEXT_ALIGN_CENTER)
 end
 
------------------------
+local function CompileStoryLabel(zone, zoneLabel, label)
+   if (not zone or not label) then return end
+
+   local factionStory = zone:GetFactionAndStoryIndex()
+   
+   label.Update = function (self)
+      self:SetText(zone:GetFactionAndStoryIndex())
+      self:SetColor(zone:GetFontColorUnpacked())
+      self:SetFont(zone:GetFontInfo())
+
+      if (factionStory) then 
+         self:SetHidden(not (zone:IsEnabled() and zone:IsNameVisible() and addon:GetOptions().storyIndexes))
+      end
+   end   
+   
+
+   label:SetAnchor(TOP, zoneLabel, BOTTOM, 0, -3)
+end
+
+-----------------------wq
 --- Blob Compiling ---
 -----------------------
 function BlobManagerClass:CompileBlob(theme, map, zone)
@@ -99,7 +115,6 @@ function BlobManagerClass:CompileBlob(theme, map, zone)
    -- info --
    blob.GetId = function (self) return blobId end
    blob:SetTexture(zone.textureFile)
-   blob.GetHitboxData = function (self) return zone.data end
 
    if (not zone.bounds) then zone.bounds = { } end
    
@@ -137,12 +152,16 @@ function BlobManagerClass:CompileBlob(theme, map, zone)
    end
 
 
-   local label = blob:GetNamedChild("Label")
-   blob.GetLabel = function (self) return label end
-   CompileLabel(zone, label)
+   local zoneLabel = blob:GetNamedChild("ZoneLabel")
+   blob.GetZoneLabel = function (self) return zoneLabel end
+   CompileZoneLabel(zone, zoneLabel)
 
-   local polygon = blob:GetNamedChild("Polygon")
-   blob.GetPolygon = function (self) return polygon end
+   local storyLabel = blob:GetNamedChild("StoryLabel")
+   blob.GetStoryLabel = function (self) return storyLabel end
+   CompileStoryLabel(zone, zoneLabel, storyLabel)
+
+   local polygon = blob:GetNamedChild("ZonePolygon")
+   blob.GetZonePolygon = function (self) return polygon end
    CompilePolygon(zone, polygon)
 
    blob.Update = function (self)
@@ -150,9 +169,9 @@ function BlobManagerClass:CompileBlob(theme, map, zone)
       self:SetSimpleAnchorParent(xN, yN)
       self:SetDimensions(widthN, heightN)
       self:SetHidden(not zone:IsEnabled())
-      self:GetLabel():Update()
-      local polygon = self:GetPolygon()
-      polygon:Update()
+      self:GetZoneLabel():Update()
+      self:GetStoryLabel():Update()
+      self:GetZonePolygon():Update()
    end
 
    blob:SetColor(1, 0,1,1,0) -- clears the color

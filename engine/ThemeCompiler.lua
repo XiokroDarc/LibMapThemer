@@ -25,7 +25,7 @@ end
 local function Merge(original, merge)
    if (type(original) == 'table' and type(merge) == 'table') then
       for key, value in pairs(merge) do             
-         local isValidTable = ((key ~= "data") and (key ~= "bounds"))
+         local isValidTable = ((key ~= "hitbox") and (key ~= "bounds"))
          if ((type(value) == 'table' and type(original[key] or false) == 'table') and isValidTable) then 
             Merge(original[key], value) 
          else
@@ -40,15 +40,15 @@ local function CopyAndMerge(original, merge)
    return Merge(original, FullCopy(merge))
 end
 
-local function MergeDependencies(dependencies)
-   if (not dependencies or type(dependencies) ~= "table") then return nil end
+local function MergeThemes(themes)
+   if (not themes or type(themes) ~= "table") then return nil end
    local mergedDependencies = { }
-   for _, dependency in pairs(dependencies) do
-      local subDependencies = MergeDependencies(dependency.dependencies)
+   for _, theme in pairs(themes) do
+      local subDependencies = MergeThemes(theme.dependencies)
       if (subDependencies) then 
          mergedDependencies = CopyAndMerge(mergedDependencies, subDependencies) 
       end
-      mergedDependencies = CopyAndMerge(mergedDependencies, dependency)
+      mergedDependencies = CopyAndMerge(mergedDependencies, theme)
    end
    return mergedDependencies
 end
@@ -67,6 +67,14 @@ local function CompileZone(theme, map, zoneId, zone)
    zone.SetNameVisibility = function (self, visible) 
       self.nameHidden = not visible
       self.nameVisible = visible
+   end
+
+   zone.GetFaction = function (self) return self.faction end
+   zone.GetStoryIndex = function (self) return self.storyIndex end
+   zone.GetFactionAndStoryIndex = function (self) 
+      if (self.faction and self.storyIndex) then
+         return self.faction..'#'..self.storyIndex 
+      end
    end
 
    -- ids
@@ -96,6 +104,8 @@ local function CompileZone(theme, map, zoneId, zone)
       local fc = self:GetFontColor()
       return fc.r, fc.g, fc.b, fc.a
    end
+   
+   zone.GetHitbox = function (self) return zone.hitbox end
 
    -- blobs
    zone.blob = blobManager:CompileBlob(theme, map, zone)
@@ -199,7 +209,6 @@ local function CompileAllMaps(theme)
    end
 end
 
-
 --------------------------
 --- Override Compiling ---
 --------------------------
@@ -208,12 +217,11 @@ function addon:GetZosFunction(functionName)
 end
 
 local function HookZosFunction(functionName)
-   -- keeps a backup of the original zos function
    if (not originalFunctions[functionName]) then 
 
+      --- keeps a backup of the original zos function
       originalFunctions[functionName] = _G[functionName]
       local _GFunction = originalFunctions[functionName]
-
 
       --- Hook function for zos functions
       --- this is a safe override which should*
@@ -227,12 +235,11 @@ local function HookZosFunction(functionName)
          ---[[ 
          local theme = addon:GetCurrentTheme()
          if (theme) then
+            --- fn = the custom override function
             local fn = theme:GetOverride(functionName)
             if (fn) then
                local override = fn(theme, output, ...)
-               if (override) then
-                  return unpack(override)
-               end
+               if (override) then return unpack(override) end
             end
          end
          --]]
@@ -262,7 +269,7 @@ local function CompileTheme(theme)
    theme.GetVersion  = function (self) return self.version end
    theme.GetPrefix   = function (self) return self.prefix end
    theme.GetOptions  = function (self) return addon:GetOptions() end
-   theme.IsEnabled   = function (self) return self:GetName() == self:GetOptions().currentTheme end
+   theme.IsEnabled   = function (self) return self:GetName() == self:GetOptions()._lmt_currentTheme end
    theme.AreNamesVisible = function (self) return (self.namesVisible or not self.namesHidden) end
    theme.SetNameVisibility = function (self, visible) 
       self.namesHidden = not visible
@@ -272,7 +279,12 @@ local function CompileTheme(theme)
    -- dependencies
    theme.dependencies = theme.dependencies or { }
    theme.GetAllDependencies       = function(self) return self.dependencies end
-   theme.GetMergedDependencies   = function (self) return MergeDependencies(self:GetDependencyList()) end
+   --theme.GetMergedDependencies   = function (self) return MergeThemes(self:GetDependencyList()) end
+
+   -- patches
+   theme.patches = theme.patches or { }
+   theme.GetAllPatches       = function(self) return self.patches end
+   --theme.GetMergedPatches   = function (self) return MergeThemes(self:GetPatchesList()) end
    
    
    theme.GetOverrides   = function (self) return self.overrides end
@@ -297,14 +309,18 @@ local function CompileTheme(theme)
    theme.IsRenamesDisabled    = function (self) return (self.disableRenames or self:GetOptions().disableRenames) end
    theme.SetRenamesDisabled   = function (self, disabled) self.disableRenames = disabled end
    theme.GetAllRenames  = function (self) return self.renames end
-   theme.GetRename      = function (self, name, ...) 
+   theme.GetRename      = function (self, name, keepLineBreaks) 
       if (not self:IsRenamesDisabled()) then 
          local rename = self:GetAllRenames()[name]
-         if (type(rename) == 'function') then rename = rename(...) end
-         if (type(rename) == 'string') then return rename end
+         --if (type(rename) == 'function') then rename = rename(...) end
+         if (type(rename) == 'string') then
+            if (not keepLineBreaks) then rename = rename:gsub("\n", "") end
+            return rename 
+         end
       end
       return name
    end
+
 
    -- maps/zones
    theme.GetAllMaps = function (self) return self.maps end
@@ -375,8 +391,11 @@ end
 function addon:CreateCompiledTheme(theme)
    if (not theme) then return end
    local compiled = { }
-   local dependencies = MergeDependencies(theme.dependencies)
-   compiled = CopyAndMerge(CopyAndMerge(compiled, dependencies), theme)
+   local dependencies = MergeThemes(theme.dependencies)
+   local patches = MergeThemes(theme.patches)
+   compiled = CopyAndMerge(compiled, dependencies)
+   compiled = CopyAndMerge(compiled, theme)
+   compiled = CopyAndMerge(compiled, patches)
    CompileTheme(compiled)
    return compiled
 end

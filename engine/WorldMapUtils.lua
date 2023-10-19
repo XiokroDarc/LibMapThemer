@@ -83,10 +83,13 @@ EVENT_MANAGER:RegisterForUpdate("OnMapUpdate", 0, function (self)
    if (not map) then return end
 
    local selectedZone = addon:GetSelectedZone()
+   
+   --- check to see if the game is in gamepad mode
+   --- this is to fix map interactions
    if (not selectedZone and addon:IsInGamepadMode()) then
       local zones = map:GetAllZones()
       for _, zone in pairs(zones) do
-         local polygon = zone:GetBlob():GetPolygon()
+         local polygon = zone:GetBlob():GetZonePolygon()
          if (polygon) then
             if (polygon:IsPointInside(addon:GetMouseCoordinates())) then
                addon:SetSelectedZone(zone)
@@ -95,7 +98,7 @@ EVENT_MANAGER:RegisterForUpdate("OnMapUpdate", 0, function (self)
          end
       end
    elseif (selectedZone) then
-      local polygon = selectedZone:GetBlob():GetPolygon()
+      local polygon = selectedZone:GetBlob():GetZonePolygon()
       if (polygon and not polygon:IsPointInside(addon:GetMouseCoordinates())) then
          addon:SetSelectedZone(nil)
       end
@@ -128,10 +131,7 @@ function addon:GetFixedGlobalCoordinates(mapId, vanillaGlobalNX, vanillaGlobalNY
    local vanillaLocalNX = (vanillaGlobalNX - nOffsetX) / nWidth
    local vanillaLocalNY = (vanillaGlobalNY -(nOffsetY - addon.TAMRIEL_VERTICAL_OFFSET)) / nHeight 
 
-   --addon:Print(vanillaLocalNX..", "..vanillaLocalNY)
    local x, y = measurement:ToGlobal(vanillaLocalNX, vanillaLocalNY)
-
-   --local x, y = vanillaLocalNX, vanillaLocalNY
    return x, y
 end
 
@@ -179,7 +179,7 @@ function addon:GetNormalizeMouse(xN, yN, widthN, heightN)
    return self:GetNormalizeCoordinates(x, y, xN, yN, widthN, heightN)
 end
 
-function addon:GetWorldMapMouseCoordinates()
+function addon:NormalizePreferredMousePositionToMap()
    local left, top = ZO_WorldMapContainer:GetLeft(), ZO_WorldMapContainer:GetTop()
    local width, height = ZO_WorldMapContainer:GetDimensions()
    return self:GetNormalizeMouse(left, top, width, height)

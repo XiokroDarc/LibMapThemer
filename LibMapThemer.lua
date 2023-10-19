@@ -1,32 +1,16 @@
-LibMapThemer = { }
-local name, addon = "LibMapThemer", LibMapThemer
+local addonName = "LibMapThemer"
+_G[addonName] = { }
+local addon = _G[addonName]
 
 addon.TAMRIEL_VERTICAL_OFFSET = -0.14000000059605 
 
 local version, build = "23.10.15", 2310160405
-local savedVarsFileName = name.."Vars"
+local savedVarsFileName = addonName.."Vars"
 local title, author, description, options
 local allThemes, allThemeChoices = { }, { }
-local fonts = { 
-   "Univers57",
-   "Univers67",
-   "FTN47",
-   "FTN57",
-   "FTN87",
-   "ProseAntiquePSMT",
-   "HandWritten_Bold",
-   "TrajanPro-Regular",
-}
-
-local fontSwitch = {
-   [27] = 26, [29] = 28, [31] = 30, [33] = 32, [35] = 34,
-   [37] = 36, [38] = 36, [39] = 40, [41] = 40, [42] = 40,
-   [43] = 40, [44] = 40, [45] = 48, [46] = 48, [47] = 48,
-   [49] = 48, [50] = 54, [51] = 54, [52] = 54, [53] = 54, 
-}
 
 local defaults = {
-   currentTheme = "None (Default)",
+   _lmt_currentTheme = "None (Default)",
    fontName = "ProseAntiquePSMT",
    fontColor = { r = 1, g = 1, b = 1, a = 1, },
    fontSize = 18,
@@ -43,6 +27,24 @@ local defaults = {
       groupArenas = false,
       soloArenas = false,
    },
+}
+
+local fonts = { 
+   "Univers57",
+   "Univers67",
+   "FTN47",
+   "FTN57",
+   "FTN87",
+   "ProseAntiquePSMT",
+   "HandWritten_Bold",
+   "TrajanPro-Regular",
+}
+
+local fontSwitch = {
+   [27] = 26, [29] = 28, [31] = 30, [33] = 32, [35] = 34,
+   [37] = 36, [38] = 36, [39] = 40, [41] = 40, [42] = 40,
+   [43] = 40, [44] = 40, [45] = 48, [46] = 48, [47] = 48,
+   [49] = 48, [50] = 54, [51] = 54, [52] = 54, [53] = 54, 
 }
 
 ---------------------------------------------------------------------
@@ -62,7 +64,7 @@ local function LoadInfo()
    local numAddons = GetAddOnManager():GetNumAddOns()
    for i = 1, numAddons do 
       local n, t, a, d = GetAddOnManager():GetAddOnInfo(i)
-      if (n == name) then
+      if (n == addonName) then
          title, author, description = t, a, d
          break 
       end
@@ -72,7 +74,7 @@ end LoadInfo() -- call instantly to get the data
 ------------------------------------------------------
 --- Addon Info ------ Addon Info ------ Addon Info ---
 ------------------------------------------------------
-function addon:GetName() return name end
+function addon:GetName() return addonName end
 
 function addon:GetTitle() return title end
 
@@ -105,13 +107,13 @@ function addon:GetAllThemes() return allThemes end
 
 function addon:GetTheme(themeName) return allThemes[themeName] end
 
-function addon:GetCurrentThemeName() return self:GetOptions().currentTheme end
+function addon:GetCurrentThemeName() return self:GetOptions()._lmt_currentTheme end
 
 function addon:GetCurrentTheme() return self:GetTheme(self:GetCurrentThemeName()) end
 
 function addon:SetCurrentThemeByName(themeName)
    if (self:GetTheme(themeName)) then 
-      self:GetOptions().currentTheme = themeName 
+      self:GetOptions()._lmt_currentTheme = themeName 
    end
    -- reset all themes to insure everything is cleared
    for _, theme in pairs(allThemes) do theme:Reset() end
@@ -157,37 +159,16 @@ function addon:ParseIntArgs(args)
    return unpack(arguments)
 end
 
-function addon:CreateRename(renames, name, rename, faction, storyIndex)
-   renames[name] = function (keepLineBreaks, zoneNumbers)
-      local nameRename = name
-
-      if (rename) then nameRename = rename end
-
-      if (not keepLineBreaks) then nameRename = nameRename:gsub("\n", "") end
-      
-      if (faction and storyIndex and zoneNumbers) then
-         -- This fixes any zone rename that uses a line break for placement
-         if (nameRename:sub(-1) == '\n') then nameRename = nameRename:sub(1,#nameRename-1) end
-         --nameRename = string.gsub(nameRename, "\n", "")
-         nameRename = nameRename.."\n"..faction.."#"..storyIndex
-      end
-
-      return nameRename
-   end
-end
-
 function addon:ClampFont(fontSize)
    local newSize = fontSwitch[fontSize]
    return newSize or fontSize
 end
 
-function addon:GetValidFonts()
-   return fonts
-end
+function addon:GetZosFonts() return fonts end
 
 -------------------------
 --- Dummy Declaration ---
 -------------------------
 function addon:IsRecordingPolygon() return false end
 
-function addon:Print(message) end
+function addon:Print() end
