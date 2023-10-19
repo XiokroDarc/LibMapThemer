@@ -30,11 +30,8 @@ local defaults = {
 }
 
 local fonts = { 
-   "Univers57",
-   "Univers67",
-   "FTN47",
-   "FTN57",
-   "FTN87",
+   "Univers57", "Univers67",
+   "FTN47", "FTN57", "FTN87",
    "ProseAntiquePSMT",
    "HandWritten_Bold",
    "TrajanPro-Regular",
