@@ -22,7 +22,6 @@ renames[""] = ""
 --]]
 
 
-
 ---[[ Override Function Template
 overrides[""] = function (selfTheme, output, ...)
    local params = { ... }
