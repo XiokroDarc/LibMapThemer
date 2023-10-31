@@ -9,7 +9,7 @@
                <Anchor point="CENTER" relativePoint="CENTER" />
             </Label>
             <Label name="$(parent)StoryLabel" layer="BACKGROUND" level="2" tier="HIGH" > </Label>
-            <Polygon name="$(parent)ZonePolygon" alpha="0" layer="1" tier="HIGH" > <AnchorFill /> </Polygon>
+            <Polygon name="$(parent)ZoneHitbox" alpha="0" layer="1" tier="HIGH" > <AnchorFill /> </Polygon>
             <Polygon name="$(parent)DebugPoly" alpha="1"  layer="3" tier="HIGH" > <AnchorFill /> </Polygon>
          </Controls>
       </TextureComposite>

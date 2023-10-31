@@ -1,31 +1,22 @@
 ;This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates.
 ;The Elder Scrolls® and related logos are registered trademarks or trademarks of ZeniMax Media Inc. in the United States and/or other countries.
 ;All rights reserved.
+;LibMapPing
 
 ## Title: LibMapThemer
 ## Description: Theme Your Maps!
 ## Author: |C7851A9@XiokroDarc|r
-## DependsOn: LibGPS>=68 LibZone LibMapPing
+## DependsOn: LibGPS>=68 LibZone 
 ## Version: 23.10.01
-## APIVersion: 101038
+## APIVersion: 101039 101040
 ## SavedVariables: LibMapThemerVars
 ## IsLibrary: true
 
 LibMapThemer.xml
 LibMapThemer.lua
 
-;Debugtools can be disabled for release version
-;debugtools/BlobEditor.lua
-debugtools/Navigator.lua
-debugtools/PolygonRecorder.lua
-debugtools/PrintCommands.lua
-
-engine/WorldMapUtils.lua
-engine/BlobCompiler.lua
-engine/ThemeCompiler.lua
-
-libthemes/OverrideData.lua
-libthemes/ZoneData.lua
-libthemes/PoiData.lua
-libthemes/RenameData.lua
-libthemes/DataMerge.lua
+libthemes/Overrides.lua
+libthemes/Renames.lua
+libthemes/Pois.lua
+libthemes/Zones.lua
+libthemes/Core.lua

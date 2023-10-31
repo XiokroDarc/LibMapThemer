@@ -1,8 +1,6 @@
-local themeName = "LibMapThemer_ZoneData"
+local themeName = "LibMapThemer_Zones"
 
 _G[themeName] = {
-   name = themeName,
-   prefix = "LibMapThemer",
    maps = { },
 }
 local theme = _G[themeName]
@@ -15,6 +13,7 @@ local maps = theme.maps
 ----------------------------------------------------------------------------------------------------------------------------------------
 maps[27] = {
    zones = { },
+   disableDefaultZones = true,
 }
 
 local tamriel = maps[27]
