@@ -428,24 +428,11 @@ end
 
 local function CompileZone( theme, map, zoneId, zone ) 
    local compiled = { }
-   
-   compiled.GetTheme = function ( ) return theme end
-   compiled.GetMap = function ( ) return map end
-   
-   compiled.GetMapId = function ( ) return zoneId end
+   --local enableRenames = zone.enableRenames
+   --compiled.IsRenamesEnabled = function ( ) return enableRenames or ( not zone.disableRenames and map:IsRenamesEnabled() ) end
 
-   compiled.GetMapName = function ( ) return theme:GetRename( GetMapNameById( zoneId ) ) end
-   
-   compiled.IsEnabled = function ( ) return map:IsEnabled( ) end
-
-   local zoneTextureFile = zone.textureFile 
-   compiled.GetTextureFile = function ( ) return zoneTextureFile end
-
-   local enableRenames = zone.enableRenames
-   compiled.IsRenamesEnabled = function ( ) return enableRenames or ( not zone.disableRenames and map:IsRenamesEnabled() ) end
-
-   local enableMapDescriptions = zone.enableMapDescriptions
-   compiled.IsMapDescriptionsEnabled = function ( ) return enableMapDescriptions or ( not zone.disableMapDescriptions and map:IsMapDescriptionsEnabled() ) end
+   --local enableMapDescriptions = zone.enableMapDescriptions
+   --compiled.IsMapDescriptionsEnabled = function ( ) return enableMapDescriptions or ( not zone.disableMapDescriptions and map:IsMapDescriptionsEnabled() ) end
 
    local enableZoneNames = zone.enableZoneNames
    compiled.IsZoneNamesEnabled = function ( ) return enableZoneNames or ( not zone.disableZoneNames and map:IsZoneNamesEnabled() ) end
@@ -468,6 +455,25 @@ local function CompileZone( theme, map, zoneId, zone )
    compiled.GetZoneColor = function ( ) return zoneColor or map:GetZoneColor() end
 
    CompileFunctions( theme, compiled, zone )
+
+   compiled.GetTheme = function ( ) return theme end
+   
+   compiled.GetMap = function ( ) return map end
+   
+   compiled.GetMapId = function ( ) return zoneId end
+
+   compiled.GetMapName = function ( )  
+      local mapName = GetMapNameById( zoneId )
+      if theme:IsRenamesEnabled() then
+         mapName = theme:GetRename( mapName )
+      end
+      return mapName 
+   end
+   
+   compiled.IsEnabled = function ( ) return map:IsEnabled( ) end
+
+   local zoneTextureFile = zone.textureFile 
+   compiled.GetTextureFile = function ( ) return zoneTextureFile end
 
    compiled.GetFontInfo = function ( self )
       return ( "EsoUI/Common/Fonts/"..self:GetFontName().. ".otf |"..self:GetFontSize().."|soft-shadow-thick" ) 
@@ -512,11 +518,11 @@ end
 local function CompileMap( theme, mapId, map ) 
    local compiled = { }
 
-   local enableRenames = map.enableRenames
-   compiled.IsRenamesEnabled = function ( ) return enableRenames or ( not map.disableRenames and theme:IsRenamesEnabled() ) end
+   --local enableRenames = map.enableRenames
+   --compiled.IsRenamesEnabled = function ( ) return enableRenames or ( not map.disableRenames and theme:IsRenamesEnabled() ) end
 
-   local enableMapDescriptions = map.enableMapDescriptions
-   compiled.IsMapDescriptionsEnabled = function ( ) return enableMapDescriptions or ( not map.disableMapDescriptions and theme:IsMapDescriptionsEnabled() ) end
+   --local enableMapDescriptions = map.enableMapDescriptions
+   --compiled.IsMapDescriptionsEnabled = function ( ) return enableMapDescriptions or ( not map.disableMapDescriptions and theme:IsMapDescriptionsEnabled() ) end
 
    local enableZoneNames = map.enableZoneNames
    compiled.IsZoneNamesEnabled = function ( ) return enableZoneNames or (not map.disableZoneNames and theme:IsZoneNamesEnabled()) end
@@ -553,7 +559,13 @@ local function CompileMap( theme, mapId, map )
 
    compiled.GetParentMapId = function ( ) return map.parentMapId end
 
-   compiled.GetMapName = function ( ) return theme:GetRename( GetMapNameById( mapId ) ) end
+   compiled.GetMapName = function ( )  
+      local mapName = GetMapNameById( mapId )
+      if theme:IsRenamesEnabled() then
+         mapName = theme:GetRename( mapName )
+      end
+      return mapName 
+   end
 
    compiled.GetMapDescription = function ( ) return theme:GetMapDescription( GetMapNameById( mapId ) ) end
 

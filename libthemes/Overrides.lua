@@ -4,21 +4,30 @@ local theme = _G[themeName]
 local overrides = theme.overrides
 
 overrides[ "ZO_WorldMap_GetMapTitle" ] = function ( self, output )
-   output[1] = self:GetRename( output[1] )
+   
+   if self:IsRenamesEnabled() then 
+      output[ 1 ] = self:GetRename( output[ 1 ] ) 
+   end
    --- 1
    -- mapTitle
    return output
 end
 
 overrides[ "GetZoneNameByIndex" ] = function ( self, output, zoneIndex )
-   output[1] = self:GetRename( output[1] )
+   
+   if self:IsRenamesEnabled() then 
+      output[ 1 ] = self:GetRename( output[ 1 ] ) 
+   end
    --- 1
    -- zoneName
    return output
 end
 
 overrides[ "GetJournalQuestLocationInfo" ] = function ( self, output, questIndex )
-   output[1] = self:GetRename( output[1] )
+   
+   if self:IsRenamesEnabled() then 
+      output[ 1 ] = self:GetRename( output[ 1 ] ) 
+   end
    --- 1
    -- zoneName, objectiveName, zoneIndex, poiIndex
    return output
@@ -44,7 +53,9 @@ overrides[ "GetMapMouseoverInfo" ] = function ( self, output )
    ZO_WorldMapMouseOverDescription:SetText( self:GetMapDescription( output[ 1 ] ) )
    ZO_WorldMapMouseOverDescription:SetHidden( not self:IsMapDescriptionsEnabled() )
 
-   output[ 1 ] = self:GetRename( output[ 1 ] ) 
+   if self:IsRenamesEnabled() then 
+      output[ 1 ] = self:GetRename( output[ 1 ] ) 
+   end
 
    if map and not map:UseDefaultZones() then
       output[ 1 ], output[ 2 ] = "", ""
@@ -60,7 +71,7 @@ overrides[ "GetMapMouseoverInfo" ] = function ( self, output )
       output[ 2 ] = zone:GetZoneBlob():GetTextureFileName()
       
       ZO_WorldMapMouseOverDescription:SetText( zone:GetMapDescription() )
-      ZO_WorldMapMouseOverDescription:SetHidden( not zone:IsMapDescriptionsEnabled() )
+      ZO_WorldMapMouseOverDescription:SetHidden( not self:IsMapDescriptionsEnabled() )
 
       local x, y, width, height = zone:GetBounds()
       if x and y and width and height then 
