@@ -30,11 +30,6 @@ tamrielZones[201]  = {
    bounds = { xN = 0.1487, yN = 0.5339, widthN = 0.0215, heightN = 0.0205, },
 }
 
-tamrielZones[201]  = {
-   textureFile = "/art/maps/tamriel/tamriel-stros.dds",
-   bounds = { xN = 0.1487, yN = 0.5339, widthN = 0.0215, heightN = 0.0205, },
-}
-
 -------------
 -- Betnikh --
 tamrielZones[227]  = {

@@ -13,7 +13,7 @@ end
 overrides[ "GetZoneNameByIndex" ] = function ( self, output, zoneIndex )
    output[1] = self:GetRename( output[1] )
    --- 1
-   -- zone name
+   -- zoneName
    return output
 end
 
@@ -32,11 +32,18 @@ overrides[ "GetMapTileTexture" ] = function ( self, output, tileIndex )
    return output
 end
 
+overrides[ "GetMapCustomMaxZoom" ] = function ( self, output )
+   local map = self:GetCurrentMap()
+   if map then output[1] = map:GetCustomMaxZoom() or output[1] end
+   return output
+end
+
 overrides[ "GetMapMouseoverInfo" ] = function ( self, output )
    local map = self:GetCurrentMap()
 
    ZO_WorldMapMouseOverDescription:SetText( self:GetMapDescription( output[ 1 ] ) )
    ZO_WorldMapMouseOverDescription:SetHidden( not self:IsMapDescriptionsEnabled() )
+
    output[ 1 ] = self:GetRename( output[ 1 ] ) 
 
    if map and not map:UseDefaultZones() then
@@ -51,6 +58,7 @@ overrides[ "GetMapMouseoverInfo" ] = function ( self, output )
    if zone then 
       output[ 1 ] = zone:GetMapName()
       output[ 2 ] = zone:GetZoneBlob():GetTextureFileName()
+      
       ZO_WorldMapMouseOverDescription:SetText( zone:GetMapDescription() )
       ZO_WorldMapMouseOverDescription:SetHidden( not zone:IsMapDescriptionsEnabled() )
 
@@ -75,7 +83,10 @@ end
 
 overrides[ "GetMapPlayerPosition" ] = function( self, output, unitTag )
    local playerMapId = self:GetPlayerMapIdFromUnitTag( unitTag )
-   output[1], output[2] = self:GetFixedGlobalCoordinates( playerMapId, output[1], output[2] )
+   local map = self:GetCurrentMap()
+   if map and map:IsMapTamriel() then
+      output[1], output[2] = self:GetFixedGlobalCoordinates( playerMapId, output[1], output[2] )
+   end
    if playerMapId == 108 then output[4] = true end -- show player in eyeva
    --- 1            2            3          4
    -- normalizedX, normalizedY, direction, isShownInCurrentMap
@@ -95,17 +106,19 @@ overrides[ "GetFastTravelNodeInfo" ] = function ( self, output, nodeIndex )
 
    local map = self:GetCurrentMap()
 
-   if map then
-      if map:IsMapTamriel() then
-         output[ 3 ], output[ 4 ] = self:GetFixedGlobalCoordinates( self:GetGlobalCoordinates( nodeIndex ) )
-      end
+   if map and map:IsMapTamriel() then
+      output[ 3 ], output[ 4 ] = self:GetFixedGlobalCoordinates( self:GetGlobalCoordinates( nodeIndex ) )
 
       local poi = map:GetPoiById( nodeIndex )
 
       if poiOptions then
          if not showAllPois then output[8] = false end
 
-         if not showAllPois or (showAllPois and poi and poi:IsEnabled()) then
+         if showAllPois and poi and poi:IsEnabled() then 
+            output[8] = true
+         end
+         
+         if not showAllPois and not output[8] then
             if output[7] == POI_TYPE_GROUP_DUNGEON and poiOptions.dungeons then
                output[8] = poiOptions.dungeons
             elseif output[7] == POI_TYPE_ACHIEVEMENT and poiOptions.trials then
@@ -114,11 +127,11 @@ overrides[ "GetFastTravelNodeInfo" ] = function ( self, output, nodeIndex )
                if output[5] == poi_group_house_unowned and poiOptions.unownedHouses then 
                   output[8] = poiOptions.unownedHouses 
                elseif output[5] == poi_group_house_owned and poiOptions.ownedHouses then 
-                  output[ 8 ] = poiOptions.ownedHouses 
+                  output[8] = poiOptions.ownedHouses 
                end
             elseif poi then
                if output[7] == POI_TYPE_WAYSHRINE then
-                  if poi:IsEnabled() then output[8] = true end
+                  --if poi:IsEnabled() then output[8] = true end
                   if poi:IsMajorSettlement() and poiOptions.majorSettlements then output[8] = poiOptions.majorSettlements
                   elseif poi:IsGuildShrine() and poiOptions.guildShrines then output[8] = poiOptions.guildShrines end
                elseif poi:IsGroupArena() and poiOptions.groupArenas then output[8] = poiOptions.groupArenas
@@ -132,7 +145,6 @@ overrides[ "GetFastTravelNodeInfo" ] = function ( self, output, nodeIndex )
    -- known, name, normalizedX, normalizedY, icon, glowIcon, poiType, isLocatedInCurrentMap
    return output
 end
-
 
 overrides["GetUniversallyNormalizedMapInfo"] = function( self, output, zoneId ) 
    local map = self:GetMapById( 27 )

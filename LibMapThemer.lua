@@ -2,7 +2,7 @@ local GPS, LZ, LMP = LibGPS3, LibZone, LibMapPing
 local addonName, acronym = "LibMapThemer", "LMT" _G[ addonName ] = { }
 local addon = _G[ addonName ]
 
-local versionName, version = "v1.0", 2310310207
+local versionName, version = "v1.0.1", 2310310207
 
 local chat = LibChatMessage and LibChatMessage( addonName, acronym )
 
@@ -40,6 +40,8 @@ end
 local function lmt_SetCurrentTheme( themeName ) lmt_GetOptions()._lmt_current_theme_ = themeName end
 
 local function lmt_GetCurrentTheme( ) return lmt_allThemes[ lmt_GetOptions()._lmt_current_theme_ ] end
+
+function addon:GetCurrentThemeName( ) return lmt_GetOptions()._lmt_current_theme_ end
 
 ----------------------------------------------------------------------------------------------------------------------------
 --- Main Update Loop ------ Main Update Loop ------ Main Update Loop ------ Main Update Loop ------ Main Update Loop ------- 
@@ -462,6 +464,9 @@ local function CompileZone( theme, map, zoneId, zone )
    local zoneFontColor = zone.fontColor
    compiled.GetFontColor = function ( ) return zoneFontColor or map:GetFontColor() end
 
+   local zoneColor = zone.zoneColor
+   compiled.GetZoneColor = function ( ) return zoneColor or map:GetZoneColor() end
+
    CompileFunctions( theme, compiled, zone )
 
    compiled.GetFontInfo = function ( self )
@@ -528,9 +533,15 @@ local function CompileMap( theme, mapId, map )
    local fontColor = map.fontColor
    compiled.GetFontColor = function ( ) return fontColor or theme:GetFontColor() end
 
-   compiled.UseDefaultZones = function ( ) return not map.zones or map.useDefaultZones end 
+   local mapZoneColor = map.zoneColor
+   compiled.GetZoneColor = function ( ) return mapZoneColor or theme:GetZoneColor() end
+
+   local mapCustomMaxZoom = map.customMaxZoom
+   compiled.GetCustomMaxZoom = function ( ) return mapCustomMaxZoom end
 
    CompileFunctions( theme, compiled, map )
+
+   compiled.UseDefaultZones = function ( ) return not map.zones or map.useDefaultZones end 
 
    compiled.GetFontInfo = function ( self )
       return ( "EsoUI/Common/Fonts/"..self:GetFontName().. ".otf |"..self:GetFontSize().."|soft-shadow-thick" ) 
@@ -700,17 +711,21 @@ local function CompileTheme( theme )
    local enableStoryIndexes = theme.enableStoryIndexes
    compiled.IsStoryIndexesEnabled = function ( ) return enableStoryIndexes end
 
-   compiled.GetValidFonts = function ( ) return validFonts end
-
-   local themeFontName = themeOptions.fontName or "Univers67"
+   local themeFontName = "Univers67"
    compiled.GetFontName = function ( ) return themeFontName end
 
-   local themeFontSize = lmt_ClampFontSize( themeOptions.fontSize or 18 ) 
+   local themeFontSize = 18
    compiled.GetFontSize = function ( ) return themeFontSize end
 
-   local themeFontColor = themeOptions.fontColor or { 1, 1, 1, 1 }
+   local themeFontColor = { 1, 1, 1, 1 }
    compiled.GetFontColor = function ( ) return themeFontColor end
 
+   compiled.GetValidFonts = function ( ) return validFonts end
+
+   local themeZoneColor = { 0, 0, 0, 0 }
+   compiled.GetZoneColor = function ( ) return themeZoneColor end
+
+   --- Above this is anything that can be overridden, below is unchangable ---
    CompileFunctions( compiled, compiled, theme )
 
    compiled.GetFontInfo = function ( self )
@@ -752,7 +767,7 @@ local function CompileTheme( theme )
 
    local themeRenames = theme.renames or { }
    compiled.GetRename = function ( self, name ) 
-      return themeRenames[ name ] or name 
+      return themeRenames[ name ] or name
    end
 
    local themeMapDescriptions = theme.mapDescriptions or { }
