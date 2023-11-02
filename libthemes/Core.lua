@@ -4,7 +4,7 @@ _G[themeName] = {
    dependencies = { LibMapThemer_Overrides, LibMapThemer_Pois, LibMapThemer_Renames },
 }
 
----[[
+--[[
 local defaultName = "LibMapThemer_Default"
 
 _G[defaultName] = {

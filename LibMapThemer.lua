@@ -2,7 +2,7 @@ local GPS, LZ, LMP = LibGPS3, LibZone, LibMapPing
 local addonName, acronym = "LibMapThemer", "LMT" _G[ addonName ] = { }
 local addon = _G[ addonName ]
 
-local versionName, version = "v1.0.1", 2310310207
+local versionName, version = "v1.0.1", 2311010210
 
 local chat = LibChatMessage and LibChatMessage( addonName, acronym )
 
@@ -402,6 +402,7 @@ local function CompileBlob( theme, map, zone )
       self:SetSimpleAnchorParent( xN, yN )
       self:SetDimensions( widthN, heightN )
       self:SetHidden( not zone:IsEnabled() )
+      self:SetColor( 1, unpack( zone:GetZoneColor() ) )
       self:GetZoneLabel():Update()
       self:GetStoryLabel():Update()
       self:GetZoneHitbox():Update()
@@ -457,7 +458,7 @@ local function CompileZone( theme, map, zoneId, zone )
    CompileFunctions( theme, compiled, zone )
 
    compiled.GetTheme = function ( ) return theme end
-   
+
    compiled.GetMap = function ( ) return map end
    
    compiled.GetMapId = function ( ) return zoneId end
@@ -940,6 +941,10 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 
 function addon:CreateTheme( theme )
+   -- return a saved theme instead of a new one
+   local existingTheme = lmt_allThemes[ theme.name ]
+   if existingTheme then return existingTheme end
+
    local themepack = MergeThemes( { theme } )
    local compiledTheme = CompileTheme( themepack )
    if compiledTheme and compiledTheme:GetName() then 
