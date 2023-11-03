@@ -371,7 +371,7 @@ local function CompileBlob( theme, map, zone )
 
    compiled.GetOffsetBounds = function ( self, ... )
       local xN, yN, widthN, heightN = self:GetBounds( ... )
-      local x, y, width, height = self:GetOffsets()
+      local x, y, width, height = zone:GetOffsets()
       return xN + x, yN + y, widthN + width, heightN + height
    end 
 
@@ -601,6 +601,7 @@ local function CompileMap( theme, mapId, map )
       local compiledZone = CompileZone( theme, compiled, zoneId, zone )
       mapZones[ zoneId ] = compiledZone
    end
+   compiled.GetAllZones = function ( ) return mapZones end
 
    compiled.Update = function ( self ) 
       for _, zone in pairs( mapZones ) do zone:Update() end 
@@ -812,9 +813,12 @@ local function CompileTheme( theme )
 
    local themeMaps = { }
    compiled.GetMapById = function ( self, mapId ) return themeMaps[ mapId ] end
+   
+   compiled.GetAllZones = function ( ) return themeMaps end
 
    compiled.GetCurrentMap = function ( ) return themeMaps[ GetCurrentMapId() ] end 
    for mapId, map in pairs ( theme.maps or { } ) do themeMaps[ mapId ] = CompileMap( compiled, mapId, map ) end
+
 
    compiled.GetZoneFromMapById = function ( self, mapId, zoneId ) 
       local map = self:GetMapById( mapId )
