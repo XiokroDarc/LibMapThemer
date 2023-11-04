@@ -89,7 +89,7 @@ overrides[ "GetMapMouseoverInfo" ] = function ( self, output )
    else
       local mapName = ZO_WorldMapMouseoverName:GetText()
 
-      if mapName ~= oldMapName then
+      if mapName ~= oldMapName and oldMapName ~= '' then
          output[ 1 ] = mapName 
          if self:IsMapDescriptionsEnabled() then
             ZO_WorldMapMouseOverDescription:SetText( self:GetMapDescription( output[ 1 ] ) )
