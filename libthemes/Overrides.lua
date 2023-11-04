@@ -49,34 +49,51 @@ end
 
 overrides[ "GetMapMouseoverInfo" ] = function ( self, output )
    local map = self:GetCurrentMap()
-
-   ZO_WorldMapMouseOverDescription:SetText( self:GetMapDescription( output[ 1 ] ) )
-   ZO_WorldMapMouseOverDescription:SetHidden( not self:IsMapDescriptionsEnabled() )
-
-   if self:IsRenamesEnabled() then 
-      output[ 1 ] = self:GetRename( output[ 1 ] ) 
-   end
+   local oldMapName = output[ 1 ]
+   --ZO_WorldMapMouseOverDescription:SetHidden( not self:IsMapDescriptionsEnabled() )
 
    if map and not map:UseDefaultZones() then
       output[ 1 ], output[ 2 ] = "", ""
       output[ 3 ], output[ 4 ] = 0, 0
       output[ 5 ], output[ 6 ] = 0, 0
-      ZO_WorldMapMouseOverDescription:SetHidden( true )
+      ZO_WorldMapMouseOverDescription:SetText( '' )
+      --ZO_WorldMapMouseOverDescription:SetHidden( true )
+   end
+   
+   if self:IsMapDescriptionsEnabled() then
+      ZO_WorldMapMouseOverDescription:SetText( self:GetMapDescription( output[ 1 ] ) )
+   end
+
+   if self:IsRenamesEnabled() then 
+      output[ 1 ] = self:GetRename( output[ 1 ] ) 
    end
 
    local zone = self:GetSelectedZone()
 
    if zone then 
-      output[ 1 ] = zone:GetMapName()
+      if self:IsMapDescriptionsEnabled() then
+         ZO_WorldMapMouseOverDescription:SetText( zone:GetMapDescription() )
+      end
+      local name = zone:GetMapName()
+      if name and name ~= '' then
+         output[ 1 ] = zone:GetMapName()
+      end
+      --output[ 1 ] = zone:GetMapName()
       output[ 2 ] = zone:GetZoneBlob():GetTextureFileName()
-      
-      ZO_WorldMapMouseOverDescription:SetText( zone:GetMapDescription() )
-      ZO_WorldMapMouseOverDescription:SetHidden( not self:IsMapDescriptionsEnabled() )
 
       local x, y, width, height = zone:GetBounds()
       if x and y and width and height then 
          output[ 5 ], output[ 6 ] = x, y
          output[ 3 ], output[ 4 ] = width, height 
+      end
+   else
+      local mapName = ZO_WorldMapMouseoverName:GetText()
+
+      if mapName ~= oldMapName then
+         output[ 1 ] = mapName 
+         if self:IsMapDescriptionsEnabled() then
+            ZO_WorldMapMouseOverDescription:SetText( self:GetMapDescription( output[ 1 ] ) )
+         end
       end
    end
 

@@ -302,6 +302,7 @@ local function CompileZoneLabel( theme, zone, blob )
       self:SetFont( zone:GetFontInfo() )
       self:SetColor( unpack( zone:GetFontColor()) )
       self:SetHidden( not zone:IsEnabled() or not zone:IsZoneNamesEnabled() )
+      self:SetTransformRotationZ( zone:GetZoneLabelRotation() )
    end
    return compiled
 end
@@ -501,6 +502,9 @@ local function CompileZone( theme, map, zoneId, zone )
       return zoneOffsets.xN or 0, zoneOffsets.yN or 0, 
              zoneOffsets.widthN or 0, zoneOffsets.heightN or 0
    end
+
+   local zoneLabelRotation = zone.zoneLabelRotation or 0
+   compiled.GetZoneLabelRotation = function ( ) return zoneLabelRotation end
 
    local zoneBlob = CompileBlob(theme, map, compiled)
    compiled.GetZoneBlob = function ( ) return zoneBlob end
@@ -832,12 +836,12 @@ local function CompileTheme( theme )
 
    compiled.Reset = function ( self )
       
-      ZO_WorldMapMouseOverDescription:SetHidden( true )
-      ZO_WorldMapMouseOverDescription:SetFont( "ZoFontGameLargeBold" )
-      ZO_WorldMapMouseOverDescription:SetWrapMode( TEXT_WRAP_MODE_ELLIPSIS )
-      ZO_WorldMapMouseOverDescription:ClearAnchors()
-      ZO_WorldMapMouseOverDescription:SetAnchor( TOPLEFT, ZO_WorldMapMouseoverName, BOTTOMLEFT, mapDescPaddingAmount, 2 )
-      ZO_WorldMapMouseOverDescription:SetAnchor( TOPRIGHT, ZO_WorldMapMouseoverName, BOTTOMRIGHT, -( mapDescPaddingAmount ), 4 )
+      --ZO_WorldMapMouseOverDescription:SetHidden( true )
+      --ZO_WorldMapMouseOverDescription:SetFont( "ZoFontGameLargeBold" )
+      --ZO_WorldMapMouseOverDescription:SetWrapMode( TEXT_WRAP_MODE_ELLIPSIS )
+      --ZO_WorldMapMouseOverDescription:ClearAnchors()
+      --ZO_WorldMapMouseOverDescription:SetAnchor( TOPLEFT, ZO_WorldMapMouseoverName, BOTTOMLEFT, mapDescPaddingAmount, 2 )
+      --ZO_WorldMapMouseOverDescription:SetAnchor( TOPRIGHT, ZO_WorldMapMouseoverName, BOTTOMRIGHT, -( mapDescPaddingAmount ), 4 )
 
       self:Update()
 
