@@ -251,6 +251,8 @@ local function CompileZoneHitbox( theme, zone, blob )
    compiled:SetHandler( "OnMouseEnter", function ( )
       if lmt_IsInGamepadMode() then return end
       selectedZone = zone
+      ZO_WorldMapMouseoverName:SetText( selectedZone:GetMapName() )
+      ZO_WorldMapMouseOverDescription:SetText( selectedZone:GetMapDescription() )
       ZO_WorldMap_MouseEnter()
    end )
 
@@ -258,6 +260,8 @@ local function CompileZoneHitbox( theme, zone, blob )
       if lmt_IsInGamepadMode() then return end
       if selectedZone and selectedZone:GetMapId() == zone:GetMapId() then
          selectedZone = nil
+         ZO_WorldMapMouseoverName:SetText( '' )
+         ZO_WorldMapMouseOverDescription:SetText( '' )
       end
       ZO_WorldMap_MouseExit()
    end )
@@ -356,8 +360,6 @@ local _BM = BlobManagerClass:New( ZO_WorldMapContainer )
 
 local function CompileBlob( theme, map, zone )
    local compiled = _BM:CreateBlob( theme, map, zone )
-
-   --compiled:SetColor(1, 0,0,0, 0) -- TODO make colors optional
 
    compiled.GetBounds = function ( _, ... )
       local xN, yN, widthN, heightN = zone:GetBounds( ... )
@@ -818,7 +820,7 @@ local function CompileTheme( theme )
    local themeMaps = { }
    compiled.GetMapById = function ( self, mapId ) return themeMaps[ mapId ] end
    
-   compiled.GetAllZones = function ( ) return themeMaps end
+   compiled.GetA4llZones = function ( ) return themeMaps end
 
    compiled.GetCurrentMap = function ( ) return themeMaps[ GetCurrentMapId() ] end 
    for mapId, map in pairs ( theme.maps or { } ) do themeMaps[ mapId ] = CompileMap( compiled, mapId, map ) end
