@@ -53,7 +53,7 @@ overrides[ "GetMapMouseoverInfo" ] = function ( self, output )
 
    local zone = self:GetSelectedZone()
    if zone then 
-      --output[ 1 ] = zone:GetMapName()
+      output[ 1 ] = zone:GetMapName()
       output[ 2 ] = zone:GetZoneBlob():GetTextureFileName()
       local x, y, width, height = zone:GetBounds()
       if x and y and width and height then 
@@ -67,6 +67,8 @@ overrides[ "GetMapMouseoverInfo" ] = function ( self, output )
          output[ 2 ] = ''
          output[ 3 ], output[ 4 ] = 0, 0
          output[ 5 ], output[ 6 ] = 0, 0
+      else
+         output[ 1 ] = self:GetRename( output[ 1 ] )
       end
    end
    --lastText = ZO_WorldMapMouseoverName:GetText()

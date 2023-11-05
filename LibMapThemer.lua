@@ -252,7 +252,9 @@ local function CompileZoneHitbox( theme, zone, blob )
       if lmt_IsInGamepadMode() then return end
       selectedZone = zone
       ZO_WorldMapMouseoverName:SetText( selectedZone:GetMapName() )
-      ZO_WorldMapMouseOverDescription:SetText( selectedZone:GetMapDescription() )
+      if theme:IsMapDescriptionsEnabled() then
+         ZO_WorldMapMouseOverDescription:SetText( selectedZone:GetMapDescription() )
+      end
       ZO_WorldMap_MouseEnter()
    end )
 
