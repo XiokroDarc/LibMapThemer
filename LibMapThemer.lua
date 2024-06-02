@@ -19,7 +19,6 @@ local chat = LibChatMessage and LibChatMessage( addonName, acronym )
    - add debug menu for creating themes easier
    - add the ability to offset the labels
    - add event manager to themes
-   - add more map descriptions
    - add more to the todo list
 --]]
 
@@ -41,7 +40,7 @@ local function lmt_SetCurrentTheme( themeName ) lmt_GetOptions()._lmt_current_th
 
 local function lmt_GetCurrentTheme( ) return lmt_allThemes[ lmt_GetOptions()._lmt_current_theme_ ] end
 
-function addon:GetCurrentThemeName( ) return lmt_GetOptions()._lmt_current_theme_ end
+local function lmt_GetCurrentThemeName( ) return lmt_GetOptions()._lmt_current_theme_ end
 
 ----------------------------------------------------------------------------------------------------------------------------
 --- Main Update Loop ------ Main Update Loop ------ Main Update Loop ------ Main Update Loop ------ Main Update Loop ------- 
@@ -130,7 +129,7 @@ ZO_PreHook( "ProcessMapClick", function ( xN, yN )
       local map = theme:GetCurrentMap()
       if map then
          if lmt_IsInGamepadMode() and selectedZone then 
-            lmt_NavigateToMap( selectedZone:GetMapId() )
+            lmt_NavigateToMap( selectedZone:GetZoneId() )
             return true 
          end
          if not map:UseDefaultZones() then
@@ -145,10 +144,12 @@ ZO_PreHook( "ZO_WorldMap_MouseUp", function ( self, mouseButton, upInside )
    if theme then
       local map = theme:GetCurrentMap()
       if map then
+         local mapId = map:GetMapId()
          if mouseButton == MOUSE_BUTTON_INDEX_RIGHT and upInside then
-            if map:GetParentMapId() then
+            local parentMapId = map:GetParentMapId()
+            if parentMapId then
                selectedZone = nil
-               lmt_NavigateToMap( map:GetParentMapId() )
+               lmt_NavigateToMap( parentMapId )
                return true
             end
          end
@@ -251,16 +252,16 @@ local function CompileZoneHitbox( theme, zone, blob )
    compiled:SetHandler( "OnMouseEnter", function ( )
       if lmt_IsInGamepadMode() then return end
       selectedZone = zone
-      ZO_WorldMapMouseoverName:SetText( selectedZone:GetMapName() )
+      ZO_WorldMapMouseoverName:SetText( selectedZone:GetZoneName() )
       if theme:IsMapDescriptionsEnabled() then
-         ZO_WorldMapMouseOverDescription:SetText( selectedZone:GetMapDescription() )
+         ZO_WorldMapMouseOverDescription:SetText( selectedZone:GetZoneDescription() )
       end
       ZO_WorldMap_MouseEnter()
    end )
 
    compiled:SetHandler( "OnMouseExit", function ( )
       if lmt_IsInGamepadMode() then return end
-      if selectedZone and selectedZone:GetMapId() == zone:GetMapId() then
+      if selectedZone and selectedZone:GetZoneId() == zone:GetZoneId() then
          selectedZone = nil
          ZO_WorldMapMouseoverName:SetText( '' )
          ZO_WorldMapMouseOverDescription:SetText( '' )
@@ -285,8 +286,8 @@ local function CompileZoneHitbox( theme, zone, blob )
             local mouseX, mouseY = lmt_NormalizePreferredMousePositionToMap()
             if mouseX == oldMouseX and mouseY == oldMouseY then
                oldMouseX, oldMouseY = nil, nil
-               if selectedZone and selectedZone:GetMapId() == zone:GetMapId() then
-                  lmt_NavigateToMap( selectedZone:GetMapId() ) 
+               if selectedZone and selectedZone:GetZoneId() == zone:GetZoneId() then
+                  lmt_NavigateToMap( selectedZone:GetZoneId() )
                   return
                end
             end
@@ -304,7 +305,7 @@ local function CompileZoneLabel( theme, zone, blob )
    compiled:SetHorizontalAlignment(TEXT_ALIGN_CENTER)
 
    compiled.Update = function( self )
-      self:SetText( zone:GetMapName() )
+      self:SetText( zone:GetZoneName() )
       self:SetFont( zone:GetFontInfo() )
       self:SetColor( unpack( zone:GetFontColor()) )
       self:SetHidden( not zone:IsEnabled() or not zone:IsZoneNamesEnabled() )
@@ -350,7 +351,7 @@ BlobManagerClass.New = function ( self, parent )
 end
 
 function BlobManagerClass:CreateBlob( theme, map, zone )
-   local blobId = (theme:GetName().."-"..map:GetMapId().."-"..zone:GetMapId())
+   local blobId = (theme:GetName().."-"..map:GetMapId().."-"..zone:GetZoneId())
    local blob = self:AcquireObject(blobId)
    blob.GetBlobId = function ( ) return blobId end
    blob:SetColor( 1, 0, 0, 0, 0 )
@@ -407,6 +408,7 @@ local function CompileBlob( theme, map, zone )
       self:SetSimpleAnchorParent( xN, yN )
       self:SetDimensions( widthN, heightN )
       self:SetHidden( not zone:IsEnabled() )
+      --self:SetColor( 1, unpack( { 1, 1, 1, 1 } ) )
       self:SetColor( 1, unpack( zone:GetZoneColor() ) )
       self:GetZoneLabel():Update()
       self:GetStoryLabel():Update()
@@ -446,7 +448,7 @@ local function CompileZone( theme, map, zoneId, zone )
    local enableStoryIndexes = zone.enableStoryIndexes
    compiled.IsStoryIndexesEnabled = function ( ) return enableStoryIndexes or ( not zone.disableStoryIndexes and map:IsStoryIndexesEnabled() ) end
    
-   compiled.GetMapDescription = function ( ) return theme:GetMapDescription( GetMapNameById( zoneId ) ) end
+   compiled.GetZoneDescription = function ( ) return theme:GetMapDescription( zone.name ) or theme:GetMapDescription( GetMapNameById( zoneId ) ) end
 
    local zoneFontName = zone.fontName
    compiled.GetFontName = function ( ) return zoneFontName or map:GetFontName( ) end
@@ -465,11 +467,14 @@ local function CompileZone( theme, map, zoneId, zone )
    compiled.GetTheme = function ( ) return theme end
 
    compiled.GetMap = function ( ) return map end
-   
-   compiled.GetMapId = function ( ) return zoneId end
 
-   compiled.GetMapName = function ( )  
-      local mapName = GetMapNameById( zoneId )
+   compiled.GetMapId = function ( ) return map:GetMapId() end
+
+   compiled.GetZoneId = function ( ) return zoneId end
+
+
+   compiled.GetZoneName = function ( )
+      local mapName = zone.name or GetMapNameById( zoneId )
       if theme:IsRenamesEnabled() then
          mapName = theme:GetRename( mapName )
       end
@@ -566,7 +571,8 @@ local function CompileMap( theme, mapId, map )
    
    compiled.GetMapId = function ( ) return mapId end
 
-   compiled.GetParentMapId = function ( ) return map.parentMapId end
+   local parentMapId = map.parentMapId 
+   compiled.GetParentMapId = function ( ) return parentMapId end
 
    compiled.GetMapName = function ( )  
       local mapName = GetMapNameById( mapId )
@@ -760,6 +766,8 @@ local function CompileTheme( theme )
 
    compiled.GetOptions = function ( ) return themeOptions end
 
+   compiled.GetCurrentOptions = function ( ) return addon:GetCurrentThemeOptions( ) end
+
    compiled.Print = function( self, ... ) chat:Print( ... ) end
    
    compiled.GetSelectedZone = function ( ) return selectedZone end
@@ -794,7 +802,7 @@ local function CompileTheme( theme )
 
    local themeMapDescriptions = theme.mapDescriptions or { }
    compiled.GetMapDescription = function ( self, name ) 
-      return themeMapDescriptions[ name ] or '' 
+      return themeMapDescriptions[ name ] or nil
    end
 
    compiled.IsEnabled = function ( ) return lmt_GetOptions()._lmt_current_theme_ == themeName end
@@ -822,11 +830,11 @@ local function CompileTheme( theme )
    local themeMaps = { }
    compiled.GetMapById = function ( self, mapId ) return themeMaps[ mapId ] end
    
-   compiled.GetA4llZones = function ( ) return themeMaps end
+   compiled.GetAllMaps = function ( ) return themeMaps end
 
    compiled.GetCurrentMap = function ( ) return themeMaps[ GetCurrentMapId() ] end 
-   for mapId, map in pairs ( theme.maps or { } ) do themeMaps[ mapId ] = CompileMap( compiled, mapId, map ) end
 
+   for mapId, map in pairs ( theme.maps or { } ) do themeMaps[ mapId ] = CompileMap( compiled, mapId, map ) end
 
    compiled.GetZoneFromMapById = function ( self, mapId, zoneId ) 
       local map = self:GetMapById( mapId )
@@ -835,6 +843,8 @@ local function CompileTheme( theme )
          return zone
       end
    end
+
+   compiled.GetTotalMaps = function ( ) return #themeMaps end
 
    compiled.Update = function ( ) for _, map in pairs ( themeMaps ) do map:Update() end end
 
@@ -870,6 +880,34 @@ local function CompileTheme( theme )
    compiled.UnregisterCallback = function ( self, eventCode, ... ) CALLBACK_MANAGER:UnregisterCallback( self:GetName(), eventCode, ... ) end
 
    compiled.FireCallbacks = function ( self, callbackName, ...) CALLBACK_MANAGER:FireCallbacks( callbackName, ...) end
+
+   local slashCommand = theme.slashCommand
+   compiled.GetSlashCommand = function ( self ) return slashCommand end
+
+   local website = theme.website
+   compiled.GetWebsiteLink = function ( self ) return website end
+
+   local feedback = theme.feedback
+   compiled.GetFeedbackLink = function ( self ) return feedback end
+
+   local dontation = theme.dontation
+   compiled.GetDontationLink = function ( self ) return dontation end
+
+   compiled.GetLAMPanelData = function ( self )
+      local panelName = self:GetName().."_Settings"
+      return panelName, {
+         type = "panel",
+         name = self:GetName(),
+         displayName = self:GetDisplayName(),
+         author = self:GetAuthor(),
+         slashCommand = self:GetSlashCommand(),
+         website = self:GetWebsiteLink(),
+         feedback = self:GetFeedbackLink(),
+         dontation = self:GetDontationLink(),
+         registerForRefresh = true,
+         registerForDefaults = true,
+      }
+   end
 
    return compiled
 end
@@ -994,6 +1032,24 @@ function addon:GetAuthor() return author end
 
 function addon:GetDescription() return description end
 
+function addon:GetCurrentTheme() return lmt_GetCurrentTheme() end
+
+function addon:GetCurrentThemeName( ) return lmt_GetCurrentThemeName( ) end
+
+function addon:GetCurrentMap() return lmt_GetCurrentTheme():GetCurrentMap() end
+
+function addon:GetMapById( mapId ) return lmt_GetCurrentTheme():GetMapById( mapId ) end
+
+function addon:GetNormalizeMouse( x, y, w, h ) return lmt_GetNormalizeMouse( x, y, w, h ) end
+
+function addon:Print( output ) return chat:Print( output ) end
+
+function addon:GetCurrentThemeOptions( ) 
+   local currentTheme = lmt_GetCurrentTheme( )
+   if currentTheme then
+      return currentTheme:GetOptions( )
+   end
+end
 
 -------------------------------------------------------------------------------------------------------------------
 --- Debug Functions ------ Debug Functions ------ Debug Functions ------ Debug Functions ------ Debug Functions ---
@@ -1010,10 +1066,18 @@ local function PrintFunctions(table)
       chat:Print( entryText )
    end 
 end
+
+
  
 ------------------------------------------------------------------------------------------------------------------------------------
 --- Slash Commands ------ Slash Commands ------ Slash Commands ------ Slash Commands ------ Slash Commands ------ Slash Commands ---
 ------------------------------------------------------------------------------------------------------------------------------------
+
+
+SLASH_COMMANDS[ "/get_current_mapid" ] = function ( ) chat:Print( "Current MapId: "..GetCurrentMapId( ) ) end
+
+SLASH_COMMANDS[ "/get_current_map_name" ] = function ( ) chat:Print( GetMapNameById( GetCurrentMapId() ) ) end
+
 
 SLASH_COMMANDS[ "/print_theme_functions" ] = function ( )
    local theme = lmt_GetCurrentTheme()
@@ -1023,6 +1087,10 @@ end
 SLASH_COMMANDS[ "/print_map_functions" ] = function ( )
    local theme = lmt_GetCurrentTheme()
    if not theme then return end
-   local map = theme:GetMapById( 27 ) or theme:GetCurrentMap() 
+   local map = theme:GetCurrentMap() or theme:GetMapById( 27 )
    PrintFunctions( map )
+end 
+
+SLASH_COMMANDS[ "/lmt_current_theme" ] = function ( )
+   chat:Print( lmt_GetCurrentThemeName( ) )
 end 

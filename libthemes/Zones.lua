@@ -141,13 +141,9 @@ tamrielZones[7] = {
 }
 
 -------------
--- Deshaan --
-tamrielZones[13] = {
-   textureFile = "/art/maps/tamriel/tamriel-deshaan.dds",
-   bounds = { xN = 0.6961, yN = 0.46, widthN = 0.1538, heightN = 0.0791, },
+_G[themeName] = {
+   dependencies = { LibMapThemer_Overrides, LibMapThemer_Pois, LibMapThemer_Renames },
 }
-
----------------
 -- Shadowfen --
 tamrielZones[26] = {
    textureFile = "/art/maps/tamriel/tamriel-shadowfen.dds",
