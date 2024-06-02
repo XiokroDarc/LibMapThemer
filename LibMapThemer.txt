@@ -5,7 +5,7 @@
 
 ## Title: LibMapThemer
 ## Description: Theme Your Maps!
-## Author: |C7851A9@XiokroDarc|r
+## Author: Xiokro
 ## DependsOn: LibGPS>=68 LibZone LibMapPing 
 ## OptionalDependsOn: LibDebugLogger LibAddonMenu-2.0 LibChatMessage
 ## Version: 1.1.0
