@@ -6,7 +6,8 @@
 ## Title: LibMapThemer
 ## Description: Theme Your Maps!
 ## Author: |C7851A9@XiokroDarc|r
-## DependsOn: LibGPS>=68 LibZone LibMapPing
+## DependsOn: LibGPS>=68 LibZone LibMapPing 
+## OptionalDependsOn: LibDebugLogger LibAddonMenu-2.0 LibChatMessage
 ## Version: 1.1.0
 ## APIVersion: 101039 101040
 ## SavedVariables: LibMapThemerVars
@@ -21,4 +22,4 @@ libthemes/Pois.lua
 libthemes/Zones.lua
 libthemes/Core.lua
 
-PolygonRecorder.lua
+;PolygonRecorder.lua

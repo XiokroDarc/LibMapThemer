@@ -5,8 +5,9 @@ local addon = _G[ addonName ]
 local versionName, version = "v1.0.1", 2311010210
 
 local chat = LibChatMessage and LibChatMessage( addonName, acronym )
-
-
+chat = chat or {
+   ["Print"] = function( self, msg ) d( msg ) end
+}
 --[[
    TODO : 
    - fix player markers and cyrodiil battle markers (dunno how to yet, may put on backburner)
@@ -674,7 +675,9 @@ end
 
 local function lmt_GetCurrentMapId() return GetCurrentMapId() end
 
-local function lmt_IsWaypointPlaced() return LMP:HasMapPing( MAP_PIN_TYPE_PLAYER_WAYPOINT, "waypoint" ) end
+local function lmt_IsWaypointPlaced() 
+   return LMP:HasMapPing( MAP_PIN_TYPE_PLAYER_WAYPOINT, "waypoint" ) 
+end
 
 local function lmt_GetPlayerMapIdFromUnitTag( unitTag )
    local zoneId, _, _, _ = GetUnitRawWorldPosition( unitTag )
