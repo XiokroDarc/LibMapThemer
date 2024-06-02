@@ -7,7 +7,7 @@
 ## Description: Theme Your Maps!
 ## Author: Xiokro
 ## DependsOn: LibGPS>=68 LibZone LibMapPing 
-## OptionalDependsOn: LibDebugLogger LibAddonMenu-2.0 LibChatMessage
+## OptionalDependsOn: LibDebugLogger LibChatMessage LibAddonMenu-2.0
 ## Version: 1.1.0
 ## APIVersion: 101039 101040
 ## SavedVariables: LibMapThemerVars
