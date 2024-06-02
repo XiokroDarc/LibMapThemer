@@ -333,3 +333,6 @@ tamrielZones[2274] = {
    textureFile = "/art/maps/tamriel/ui_maps_telvanni_blob.dds",
    bounds = { xN = 0.78124, yN = 0.35627, widthN = 0.17529, heightN = 0.1455, },
 }
+
+
+--TODO ADD WEST WEALD

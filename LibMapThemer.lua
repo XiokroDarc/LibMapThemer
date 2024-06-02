@@ -18,7 +18,6 @@ local chat = LibChatMessage and LibChatMessage( addonName, acronym )
    - add more map widgets/gadgets
    - add debug menu for creating themes easier
    - add the ability to offset the labels
-   - add event manager to themes
    - add more to the todo list
 --]]
 
@@ -849,7 +848,6 @@ local function CompileTheme( theme )
    compiled.Update = function ( ) for _, map in pairs ( themeMaps ) do map:Update() end end
 
    compiled.Reset = function ( self )
-      
       --ZO_WorldMapMouseOverDescription:SetHidden( true )
       --ZO_WorldMapMouseOverDescription:SetFont( "ZoFontGameLargeBold" )
       --ZO_WorldMapMouseOverDescription:SetWrapMode( TEXT_WRAP_MODE_ELLIPSIS )
@@ -864,6 +862,7 @@ local function CompileTheme( theme )
       
       -- DONT ENABLE crashes
       --self:FireCallbacks( "OnWorldMapChanged", nil )
+      --self:FireCallbacks( "OnWorldMapShown", nil )
       --CALLBACK_MANAGER:FireCallbacks( "OnWorldMapShown", nil )
    end
    

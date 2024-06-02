@@ -7,7 +7,7 @@
 ## Description: Theme Your Maps!
 ## Author: |C7851A9@XiokroDarc|r
 ## DependsOn: LibGPS>=68 LibZone LibMapPing
-## Version: 1.0.4
+## Version: 1.1.0
 ## APIVersion: 101039 101040
 ## SavedVariables: LibMapThemerVars
 ## IsLibrary: true

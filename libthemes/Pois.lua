@@ -336,3 +336,6 @@ tamrielPois[529] = { majorSettlement = true, guildShrine = true, } -- Vastyr Way
 tamrielPois[536] = { majorSettlement = true, guildShrine = true, }  -- Necrom Wayshrine
 tamrielPois[538] = { majorSettlement = true, }                      -- Ald Isra Wayshrine
 tamrielPois[554] = { majorSettlement = true, }                      -- Alavelis Wayshrine
+
+
+--TODO ADD WEST WEALD

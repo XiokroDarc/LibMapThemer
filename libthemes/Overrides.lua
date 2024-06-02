@@ -3,8 +3,9 @@ _G[themeName] = { overrides = { }, }
 local theme = _G[themeName]
 local overrides = theme.overrides
 
+
+
 overrides[ "ZO_WorldMap_GetMapTitle" ] = function ( self, output )
-   
    if self:IsRenamesEnabled() then 
       output[ 1 ] = self:GetRename( output[ 1 ] ) 
    end
@@ -13,8 +14,9 @@ overrides[ "ZO_WorldMap_GetMapTitle" ] = function ( self, output )
    return output
 end
 
+
+
 overrides[ "GetZoneNameByIndex" ] = function ( self, output, zoneIndex )
-   
    if self:IsRenamesEnabled() then 
       output[ 1 ] = self:GetRename( output[ 1 ] ) 
    end
@@ -23,8 +25,9 @@ overrides[ "GetZoneNameByIndex" ] = function ( self, output, zoneIndex )
    return output
 end
 
+
+
 overrides[ "GetJournalQuestLocationInfo" ] = function ( self, output, questIndex )
-   
    if self:IsRenamesEnabled() then 
       output[ 1 ] = self:GetRename( output[ 1 ] ) 
    end
@@ -32,6 +35,8 @@ overrides[ "GetJournalQuestLocationInfo" ] = function ( self, output, questIndex
    -- zoneName, objectiveName, zoneIndex, poiIndex
    return output
 end
+
+
 
 overrides[ "GetMapTileTexture" ] = function ( self, output, tileIndex )
    local map = self:GetCurrentMap()
@@ -41,16 +46,19 @@ overrides[ "GetMapTileTexture" ] = function ( self, output, tileIndex )
    return output
 end
 
+
+
 overrides[ "GetMapCustomMaxZoom" ] = function ( self, output )
    local map = self:GetCurrentMap()
    if map then output[1] = map:GetCustomMaxZoom() or output[1] end
    return output
 end
 
+
+
 overrides[ "GetMapMouseoverInfo" ] = function ( self, output )
    --ZO_WorldMapMouseoverName:SetText( '' )
    --ZO_WorldMapMouseOverDescription:SetText( '' )
-
    local zone = self:GetSelectedZone()
    if zone then 
       output[ 1 ] = zone:GetZoneName()
@@ -77,12 +85,16 @@ overrides[ "GetMapMouseoverInfo" ] = function ( self, output )
    return output
 end
 
-overrides[ "GetMapPlayerWaypoint" ] = function(self, output)
+
+
+overrides[ "GetMapPlayerWaypoint" ] = function( self, output )
    if self:IsWaypointPlaced() and self:GetCurrentMapId() == 27 then output[1], output[2] = nil, nil end
    --- 1   2
    -- xN, yN
    return output
 end
+
+
 
 overrides[ "GetMapPlayerPosition" ] = function( self, output, unitTag )
    local playerMapId = self:GetPlayerMapIdFromUnitTag( unitTag )
@@ -96,31 +108,26 @@ overrides[ "GetMapPlayerPosition" ] = function( self, output, unitTag )
    return output
 end
 
+
+
 local poi_group_house_owned   = "/esoui/art/icons/poi/poi_group_house_owned.dds"
 local poi_group_house_unowned = "/esoui/art/icons/poi/poi_group_house_unowned.dds"
-
 overrides[ "GetFastTravelNodeInfo" ] = function ( self, output, nodeIndex )
    local showAllPois = self:GetOptions().showAllPois
    local poiOptions = self:GetOptions().pois
-
    output[ 2 ] = self:GetRename( output[2] )
-
    if self:GetOptions().disablePoiGlow then output[6] = nil end
-
    local map = self:GetCurrentMap()
-
    if map and map:IsMapTamriel() then
       output[ 3 ], output[ 4 ] = self:GetFixedGlobalCoordinates( self:GetGlobalCoordinates( nodeIndex ) )
-
       local poi = map:GetPoiById( nodeIndex )
-
       if poiOptions then
-         if not showAllPois then output[8] = false end
-
+         if not showAllPois then 
+            output[8] = false 
+         end
          if showAllPois and poi and poi:IsEnabled() then 
             output[8] = true
          end
-         
          if not showAllPois and not output[8] then
             if output[7] == POI_TYPE_GROUP_DUNGEON and poiOptions.dungeons then
                output[8] = poiOptions.dungeons
@@ -143,11 +150,12 @@ overrides[ "GetFastTravelNodeInfo" ] = function ( self, output, nodeIndex )
          end
       end
    end
-
    --- 1      2     3            4            5     6         7        8
    -- known, name, normalizedX, normalizedY, icon, glowIcon, poiType, isLocatedInCurrentMap
    return output
 end
+
+
 
 overrides["GetUniversallyNormalizedMapInfo"] = function( self, output, zoneId ) 
    local map = self:GetMapById( 27 )
