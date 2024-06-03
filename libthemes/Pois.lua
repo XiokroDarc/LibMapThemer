@@ -339,3 +339,8 @@ tamrielPois[554] = { majorSettlement = true, }                      -- Alavelis 
 
 
 --TODO ADD WEST WEALD
+tamrielPois[558] = { majorSettlement = true, guildShrine = true, }  -- Skingrad Wayshrine
+--tamrielPois[561] = { majorSettlement = true, }                      -- Ontus Wayshrine
+tamrielPois[562] = { majorSettlement = true, }                      -- Sutch Wayshrine
+tamrielPois[578] = { majorSettlement = true, }                      -- Ostumir Wayshrine
+tamrielPois[560] = { majorSettlement = true, }                      -- Vashabar Wayshrine
