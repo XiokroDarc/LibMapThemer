@@ -9,7 +9,8 @@
 ## DependsOn: LibGPS>=68 LibZone LibMapPing 
 ## OptionalDependsOn: LibDebugLogger LibChatMessage LibAddonMenu-2.0
 ## Version: 1.1.0
-## APIVersion: 101039 101040
+## AddOnVersion: 2
+## APIVersion: 101041
 ## SavedVariables: LibMapThemerVars
 ## IsLibrary: true
 
