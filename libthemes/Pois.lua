@@ -337,10 +337,21 @@ tamrielPois[536] = { majorSettlement = true, guildShrine = true, }  -- Necrom Wa
 tamrielPois[538] = { majorSettlement = true, }                      -- Ald Isra Wayshrine
 tamrielPois[554] = { majorSettlement = true, }                      -- Alavelis Wayshrine
 
+------------------------------------------------------------------------------------------------------------------------------------------
+---- Gold Road DLC -------- Gold Road DLC -------- Gold Road DLC -------- Gold Road DLC -------- Gold Road DLC -------- Gold Road DLC ----
+------------------------------------------------------------------------------------------------------------------------------------------
 
---TODO ADD WEST WEALD
+----------------
+-- West Weald -- 
 tamrielPois[558] = { majorSettlement = true, guildShrine = true, }  -- Skingrad Wayshrine
 --tamrielPois[561] = { majorSettlement = true, }                      -- Ontus Wayshrine
 tamrielPois[562] = { majorSettlement = true, }                      -- Sutch Wayshrine
 tamrielPois[578] = { majorSettlement = true, }                      -- Ostumir Wayshrine
 tamrielPois[560] = { majorSettlement = true, }                      -- Vashabar Wayshrine
+
+
+-- Grand Psijic Villa
+tamrielPois[373] = { disabled = true, }
+
+-- Tower of Unutterable Truths
+tamrielPois[567] = { disabled = true, }

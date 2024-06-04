@@ -119,6 +119,7 @@ overrides[ "GetFastTravelNodeInfo" ] = function ( self, output, nodeIndex )
    if self:GetOptions().disablePoiGlow then output[6] = nil end
    local map = self:GetCurrentMap()
    if map and map:IsMapTamriel() then
+
       output[ 3 ], output[ 4 ] = self:GetFixedGlobalCoordinates( self:GetGlobalCoordinates( nodeIndex ) )
       local poi = map:GetPoiById( nodeIndex )
       if poiOptions then
@@ -135,7 +136,8 @@ overrides[ "GetFastTravelNodeInfo" ] = function ( self, output, nodeIndex )
                output[8] = poiOptions.trials
             elseif output[7] == POI_TYPE_HOUSE then
                if output[5] == poi_group_house_unowned and poiOptions.unownedHouses then 
-                  output[8] = poiOptions.unownedHouses 
+                  output[8] = poiOptions.unownedHouses
+                  --self:Print(output[2].." "..nodeIndex) 
                elseif output[5] == poi_group_house_owned and poiOptions.ownedHouses then 
                   output[8] = poiOptions.ownedHouses 
                end
@@ -146,6 +148,9 @@ overrides[ "GetFastTravelNodeInfo" ] = function ( self, output, nodeIndex )
                   elseif poi:IsGuildShrine() and poiOptions.guildShrines then output[8] = poiOptions.guildShrines end
                elseif poi:IsGroupArena() and poiOptions.groupArenas then output[8] = poiOptions.groupArenas
                elseif poi:IsSoloArena() and poiOptions.soloArenas then output[8] = poiOptions.soloArenas end
+            end
+            if poi and not poi:IsEnabled() then
+               output[8] = false
             end
          end
       end
