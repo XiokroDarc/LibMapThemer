@@ -2,7 +2,7 @@ local GPS, LZ, LMP = LibGPS3, LibZone, LibMapPing
 local addonName, acronym = "LibMapThemer", "LMT" _G[ addonName ] = { }
 local addon = _G[ addonName ]
 
-local versionName, version = "v1.1.2", 2406030600
+local versionName, version = "v1.1.4", 2406030600
 
 local chat = LibChatMessage and LibChatMessage( addonName, acronym )
 chat = chat or {
