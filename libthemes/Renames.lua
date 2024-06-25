@@ -8,8 +8,6 @@ local theme = _G[themeName]
 local renames = theme.renames
 --local mapDescriptions = theme.mapDescriptions
 
-renames["Gold Coast"]               = "The Gold Coast"
-renames["Alik'r Desert"]            = "The Alik'r Desert"
 renames["Galen and Y'ffelon"]       = "Galen & Y'ffelon"
 renames["High Isle and Amenos"]     = "High Isle & Amenos"
 renames["Northern High Rock Gate"]  = "Northern Hammerfell Gate"

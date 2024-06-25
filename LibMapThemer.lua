@@ -477,6 +477,13 @@ local function CompileZone( theme, map, zoneId, zone )
       local mapName = zone.name or GetMapNameById( zoneId )
       if theme:IsRenamesEnabled() then
          mapName = theme:GetRename( mapName )
+      else
+         -- Fix map clipping
+         if mapName == "High Isle and Amenos" then
+            return "High Isle & Amenos"
+         elseif mapName == "Galen and Y'ffelon" then
+            return "Galen & Y'ffelon"
+         end
       end
       return mapName 
    end
