@@ -8,7 +8,7 @@
 ## Author: Xiokro
 ## DependsOn: LibGPS>=68 LibZone LibMapPing 
 ## OptionalDependsOn: LibDebugLogger LibChatMessage LibAddonMenu-2.0
-## Version: 1.1.4
+## Version: 1.1.5
 ## AddOnVersion: 2
 ## APIVersion: 101041
 ## SavedVariables: LibMapThemerVars
