@@ -10,7 +10,7 @@
 ## OptionalDependsOn: LibDebugLogger LibChatMessage LibAddonMenu-2.0
 ## Version: 1.1.5
 ## AddOnVersion: 2
-## APIVersion: 101041
+## APIVersion: 101041 101042 101043
 ## SavedVariables: LibMapThemerVars
 ## IsLibrary: true
 
@@ -23,4 +23,4 @@ libthemes/Pois.lua
 libthemes/Zones.lua
 libthemes/Core.lua
 
-;PolygonRecorder.lua
+PolygonRecorder.lua
